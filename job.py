@@ -1,9 +1,12 @@
+# Во всём модуле отсутствуют анотации типов, из-за чего не понятно,
+# что функция должна принимать на вход и интуитивно не понятно, как её использовать
+
 import shutil
 from urllib.request import urlopen
 from pathlib import Path
 import ssl
 import json
-from logger import logger
+from logger import logger # отсутствует модуль с конфигурацией логгера. Советую посмотреть logging https://docs.python.org/3/library/logging.html
 
 
 def coroutine(f):
@@ -46,7 +49,7 @@ def get_and_write_data(condition, url):
 
 def copy_file(condition, x=None):
     file = 'punchline.txt'
-    to_path = './jokes/'
+    to_path = './jokes/' # если такой папки нет, то копирование не произойдет и возникнет исключение. При возникновении исключения можно создавать папку и попробовать ещё раз
     with condition:
         condition.wait(timeout=1)
         try:
@@ -70,7 +73,7 @@ def delete_file(condition, x=None):
 class Job:
     def __init__(
             self,
-            func=None,
+            func=None, # не все аргументы должны быть None. Например любая джоба должна принимать функцию
             name=None,
             args=None,
     ):

@@ -3,11 +3,20 @@
 # Я просто не понимаю даже что гуглить, что бы сделать всё задание.
 # Не знаю, может после ревью я с мёртвой точки сдвинусь, поэтому отправляю пока так...
 
+# Код не соответствует pep8
+# Для проверки можно установить flake8 и делать запуск командой flake8 . --exclude [files, dirs]
+# https://flake8.pycqa.org/en/latest/
+
 from job import Job, get_and_write_data, delete_file, copy_file
 from logger import logger
 import multiprocessing
 
 
+# Неплохая реализация scheduler. Но она основана на многопроцессности, что достаточно не удобно, если задачи зависимы друг от друга и нужно делить ресурсы
+# советую посмотреть в сторону https://docs.python.org/3/library/asyncio.html
+# всё, что ты написал, можно практически бесшовно перенести на asyncio
+
+# Чтобы понять асинхронность можно почитать https://realpython.com/async-io-python/ эту статью. Там нелохо объяснены принципы
 def coroutine(f):
     def wrap(*args, **kwargs):
         gen = f(*args, **kwargs)
@@ -47,6 +56,9 @@ class Scheduler(object):
                 process.join()
                 logger.info(f' process {process} stopped!')
 
+    # Если резко прервать выполнение этого кода, то состояние задач не сохранится и при перезапуске кода выполнение начнется заново.
+    # Можно реализовать машину состояний для класса job (https://webdevblog.ru/sozdanie-konechnyh-avtomatov-s-pomoshhju-korutin-v-python/,
+    # https://github.com/pytransitions/transitions - хорошая библиотека, где можно понять, что такое машина состояний и как её реализовать)
     def run(self, jobs: tuple):
         gen = self.schedule()
         gen.send(jobs)
